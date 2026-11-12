@@ -1,0 +1,42 @@
+[
+  {
+    "publisherId": "PUB-101",
+    "name": "Search Partner A",
+    "campaignIds": [
+      "CMP-MA-SEARCH"
+    ],
+    "payoutPerPayableCall": 30.0
+  },
+  {
+    "publisherId": "PUB-102",
+    "name": "CTV Network B",
+    "campaignIds": [
+      "CMP-MA-CTV"
+    ],
+    "payoutPerPayableCall": 32.0
+  },
+  {
+    "publisherId": "PUB-103",
+    "name": "Social Affiliate C",
+    "campaignIds": [
+      "CMP-FE-SOCIAL"
+    ],
+    "payoutPerPayableCall": 22.0
+  },
+  {
+    "publisherId": "PUB-104",
+    "name": "Social Affiliate D",
+    "campaignIds": [
+      "CMP-FE-SOCIAL"
+    ],
+    "payoutPerPayableCall": 22.0
+  },
+  {
+    "publisherId": "PUB-105",
+    "name": "Search Partner E",
+    "campaignIds": [
+      "CMP-MA-SEARCH"
+    ],
+    "payoutPerPayableCall": 28.0
+  }
+]

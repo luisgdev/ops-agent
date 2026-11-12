@@ -1,0 +1,20 @@
+[
+  {
+    "campaignId": "CMP-MA-SEARCH",
+    "name": "Medicare Advantage - Search",
+    "vertical": "MEDICARE",
+    "payableAfterSec": 90
+  },
+  {
+    "campaignId": "CMP-MA-CTV",
+    "name": "Medicare Advantage - CTV",
+    "vertical": "MEDICARE",
+    "payableAfterSec": 90
+  },
+  {
+    "campaignId": "CMP-FE-SOCIAL",
+    "name": "Final Expense - Social",
+    "vertical": "FINAL_EXPENSE",
+    "payableAfterSec": 120
+  }
+]

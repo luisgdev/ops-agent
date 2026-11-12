@@ -1,0 +1,88 @@
+[
+  {
+    "buyerId": "BUY-201",
+    "name": "Buyer North",
+    "campaignIds": [
+      "CMP-MA-SEARCH",
+      "CMP-MA-CTV"
+    ],
+    "states": [
+      "TX",
+      "OH",
+      "PA",
+      "MI",
+      "IL"
+    ],
+    "dailyCap": 150,
+    "priority": 1,
+    "revenuePerPayableCall": 45.0,
+    "status": "ACTIVE"
+  },
+  {
+    "buyerId": "BUY-202",
+    "name": "Buyer South",
+    "campaignIds": [
+      "CMP-MA-SEARCH",
+      "CMP-MA-CTV"
+    ],
+    "states": [
+      "TX",
+      "MS",
+      "TN",
+      "GA",
+      "NC",
+      "SC"
+    ],
+    "dailyCap": 190,
+    "priority": 1,
+    "revenuePerPayableCall": 48.0,
+    "status": "ACTIVE"
+  },
+  {
+    "buyerId": "BUY-203",
+    "name": "Buyer East",
+    "campaignIds": [
+      "CMP-MA-SEARCH",
+      "CMP-MA-CTV"
+    ],
+    "states": [
+      "FL",
+      "VA",
+      "GA"
+    ],
+    "dailyCap": 75,
+    "priority": 1,
+    "revenuePerPayableCall": 50.0,
+    "status": "ACTIVE"
+  },
+  {
+    "buyerId": "BUY-204",
+    "name": "Buyer Gulf",
+    "campaignIds": [
+      "CMP-MA-SEARCH"
+    ],
+    "states": [
+      "FL",
+      "TX",
+      "MS"
+    ],
+    "dailyCap": 100,
+    "priority": 2,
+    "revenuePerPayableCall": 44.0,
+    "status": "ACTIVE"
+  },
+  {
+    "buyerId": "BUY-205",
+    "name": "Buyer Legacy FE",
+    "campaignIds": [
+      "CMP-FE-SOCIAL"
+    ],
+    "states": [
+      "*"
+    ],
+    "dailyCap": 200,
+    "priority": 1,
+    "revenuePerPayableCall": 35.0,
+    "status": "ACTIVE"
+  }
+]
