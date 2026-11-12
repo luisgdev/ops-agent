@@ -60,7 +60,7 @@ final class HtmlReport {
         h.append("</section>\n");
 
         if (!r.toolCalls().isEmpty()) {
-            h.append("<section>\n<details class=\"card\">\n<summary>Tool calls (").append(r.toolCalls().size())
+            h.append("<section>\n<details class=\"card tools-card\">\n<summary>Tool calls (").append(r.toolCalls().size())
                     .append(")</summary>\n<ol class=\"tools\">\n");
             for (ToolCallRecord t : r.toolCalls()) {
                 h.append("<li><span class=\"").append(t.ok() ? "ok" : "bad").append("\">").append(t.ok() ? "✓" : "✗")
@@ -308,8 +308,17 @@ final class HtmlReport {
             .stat{flex:1 1 130px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;display:flex;flex-direction:column}
             .stat b{font-size:1.4rem;letter-spacing:-.02em}.stat span{color:var(--muted);font-size:.8rem}
             .note{flex-basis:100%;margin:0;padding:10px 14px;border-radius:10px;background:var(--warn-bg);color:var(--warn)}
-            @media print{body{background:#fff;color:#000}main{padding:0;max-width:none}.card,.stat{box-shadow:none;break-inside:avoid}
-            details:not([open])>*:not(summary){display:block}}
+            @page{margin:14mm}
+            @media print{
+            html,body{background:#fff}body{color:#000;font-size:11pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+            main{padding:0;max-width:none}
+            .card,.stat,.table-wrap{box-shadow:none;overflow:visible}
+            .answer,.tools-card{break-inside:auto;page-break-inside:auto}
+            .action,.stat,.question,.warning,blockquote,pre,tr,li{break-inside:avoid;page-break-inside:avoid}
+            h2,h3,h4,.section-title,.action-head{break-after:avoid;page-break-after:avoid}
+            tbody tr:hover{background:none}
+            thead{display:table-header-group}
+            a{color:inherit;text-decoration:none}}
             @media (max-width:600px){main{padding:24px 14px}.card{padding:16px}dl{grid-template-columns:1fr}}
             """;
 }
