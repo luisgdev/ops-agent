@@ -37,6 +37,30 @@ Add `"dryRun": true` to see what the agent would do without changing anything.
 `scripts/demo.sh` runs the full flow: dry run, then the real run, then pending actions,
 approve/reject, the audit log and the current settings.
 
+### Command line (no server needed)
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-...
+scripts/ask.sh                                   # asks the Nov 4 question above
+scripts/ask.sh --dry-run "Why did BUY-202 fail on Nov 4?"
+```
+
+It prints a readable report: the answer rendered for the terminal (tables, lists, bold),
+then each action with its status (APPLIED, NEEDS APPROVAL, DRY RUN, BLOCKED), its reason, policy
+note and warnings, then tokens, time and request id. The rendering lives in the `cli` package
+only; the service still returns the model's Markdown unchanged.
+
+| Flag | Effect |
+|---|---|
+| `--dry-run` | Record what the agent would do, change nothing |
+| `--raw` | Print the model's Markdown as is |
+| `--verbose` | Also list every tool call with its input and duration |
+| `--no-color` | Plain text (automatic when piped or when `NO_COLOR` is set) |
+| `--out file.json` | Save the full JSON response |
+
+Pending actions are approved or rejected through the REST API (`mvn spring-boot:run`). The CLI
+keeps no state between runs apart from `audit/audit-log.jsonl`.
+
 ### API
 
 | Method | Path | What it does |
@@ -222,7 +246,7 @@ A few more protections around this:
 `java.net.http`, so every request field is visible and easy to change live. The core
 (platform, metrics, tools, policy, agent) is plain Java with no Spring imports. `OpsAgent`
 wires it, Spring only exposes it over HTTP, and `cli/AskCli` runs the same thing from the
-command line.
+command line, with a terminal-friendly rendering of the answer.
 
 ---
 
@@ -280,8 +304,8 @@ src/main/java/digital/rya/opsagent/
   agent/      AgentService (the loop), AnthropicMessagesApi, SystemPrompt, AgentResponse
   config/     OpsAgent (plain-Java wiring), AppConfig (Spring beans)
   web/        AgentController, ActionController, PlatformController, ApiErrors
-  cli/        AskCli (ask from the command line)
+  cli/        AskCli (ask from the command line), MarkdownRenderer (terminal output)
 data/         the data kit, unchanged
 docs/         full JSON of the run shown above
-scripts/      demo.sh
+scripts/      demo.sh (REST flow), ask.sh (command-line report)
 ```
