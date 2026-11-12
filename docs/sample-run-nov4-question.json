@@ -1,0 +1,184 @@
+{
+  "requestId" : "REQ-eaf6d45b",
+  "question" : "Call volume on Nov 4 was well above Nov 2, but revenue and margin went down. Why, how much did each cause cost us, and what should we do about it?",
+  "dryRun" : false,
+  "model" : "claude-opus-5-5",
+  "answer" : "Nov 4 had 120 more calls than Nov 2, but margin fell by **$501** ($4,722 → $4,221) and revenue by **$1,215**. Most of the extra calls didn't turn into payable calls. The main reasons are that **Buyer South (BUY-202) stopped answering** and **Social Affiliate D (PUB-104) sent junk traffic**. Two smaller problems also wasted volume: Buyer East hit its cap, and some calls came from states where we have no buyer.\n\n| Cause | Evidence | Est. lost revenue | Est. lost margin |\n|---|---|---|---|\n| **BUY-202 Buyer South not answering** (lost money) | Failed 42.9% of 177 routed calls (76 no-answer or hangup) vs 11.2% on Nov 2. Its pings still said about 5.6 agents were free. Failures were heavy from 9:00 on (10 no-answers at 9:00 and again at 10:00). | $1,699.76 | $630.80 |\n| **PUB-104 junk traffic** (lost money) | 140 calls (vs 80) but only 37 payable (vs 57). 22 duplicates, 52 calls under 30s, median length 18s (vs 529s). Its calls also used up BUY-205's cap, which was reached at 16:38, so good calls from other publishers were turned away. | $744.43 | $276.50 |\n| **BUY-203 Buyer East cap reached** (extra volume not captured) | Cap of 75 reached at 13:53. 15 FL/VA calls rejected, and no other buyer covers those. | $355.01 | $119.33 |\n| **No buyer licensed in AZ** (extra volume not captured) | 10 more AZ calls than Nov 2 couldn't be sold (17 AZ calls in total on Nov 4). | $291.27 | $102.82 |\n\n**How this matches the actual change:** The four causes add up to **$1,129.45** of lost margin. That's more than the actual drop of $501 because the rest of the business grew: without these causes, margin would have been **$628.45 higher** than Nov 2. CTV Network B is an example, with margin up $183. Each call is counted under only one cause: a buyer's failed calls count against the buyer, and a publisher is charged only for its own traffic quality, including good calls it pushed out at a cap. The cap and AZ causes didn't cut what we earned on Nov 2. They explain why the extra volume didn't become revenue.\n\n### Actions taken\n- **ACT-0001 – APPLIED:** Moved BUY-202 down one priority level, from 1 to 2. I didn't pause it because it's the only buyer for 7 state/campaign combinations (NC, SC, TN, and MS on CTV), which carried 92 calls on Nov 4. At priority 2, BUY-201, BUY-203 and BUY-204 get its GA, MS-search and TX calls first, and BUY-202 still takes the calls nobody else can.\n- **ACT-0002 – APPLIED:** Flagged PUB-104 for human review. This doesn't change routing.\n\n### Actions waiting for approval\n- **ACT-0003 – PENDING APPROVAL:** Raise BUY-203's daily cap from 75 to 90. That's the cap the tool says would have taken every call rejected at the cap on Nov 4. Approve only after Buyer East agrees to take the extra calls.\n\n### Recommended for the team\n- **Call Buyer South:** its pings say agents are free while 43% of calls go unanswered. Get them to fix staffing or their ping integration before moving them back to priority 1.\n- **PUB-104 review:** ask about the duplicates and the 18-second median call length. If it doesn't improve, consider pausing it (needs approval) or getting refunds or holdbacks.\n- **AZ coverage:** sign a buyer licensed in AZ for the Medicare Advantage Search and CTV campaigns.\n- **More FL/VA capacity:** sign another CTV buyer there. BUY-204 and BUY-205 are licensed in those states but don't buy CTV. Also watch BUY-205's cap once PUB-104 is under review.\n\n**Caveat:** These figures are estimates of what would have happened if each problem hadn't occurred, based on how things ran on Nov 2. They are not booked losses.",
+  "stopReason" : "end_turn",
+  "iterations" : 4,
+  "toolCalls" : [ {
+    "iteration" : 1,
+    "tool" : "get_platform_overview",
+    "input" : { },
+    "ok" : true,
+    "error" : null,
+    "resultPreview" : "{\"daysWithData\":[\"2026-11-02\",\"2026-11-03\",\"2026-11-04\"],\"routingRule\":\"A call goes to the ACTIVE buyer on that campaign who covers the caller's state, has cap left and the best priority (1 = highest). Routed calls count against the cap.\",\"campaigns\":[{\"campaignId\":\"CMP-MA-SEARCH\",\"name\":\"Medicare A...",
+    "durationMs" : 73
+  }, {
+    "iteration" : 1,
+    "tool" : "compare_days",
+    "input" : {
+      "baselineDay" : "2026-11-02",
+      "targetDay" : "2026-11-04"
+    },
+    "ok" : true,
+    "error" : null,
+    "resultPreview" : "{\"baseline\":{\"day\":\"2026-11-02\",\"calls\":500,\"callsByStatus\":{\"CONNECTED_PAYABLE\":301,\"CONNECTED_SHORT\":142,\"NO_ANSWER\":22,\"BUYER_HANGUP\":22,\"NOT_ROUTED_CAP\":3,\"NOT_ROUTED_NO_BUYER\":7,\"DUPLICATE\":3},\"routed\":487,\"payable\":301,\"payableRateOfConnected\":0.6795,\"revenue\":12958.0,\"payout\":8236.0,\"margin\":...",
+    "durationMs" : 49
+  }, {
+    "iteration" : 1,
+    "tool" : "explain_margin_change",
+    "input" : {
+      "baselineDay" : "2026-11-02",
+      "targetDay" : "2026-11-04"
+    },
+    "ok" : true,
+    "error" : null,
+    "resultPreview" : "{\"baselineDay\":\"2026-11-02\",\"targetDay\":\"2026-11-04\",\"callsChange\":120,\"revenueChange\":-1215.0,\"marginChange\":-501.0,\"baselineMargin\":4722.0,\"targetMargin\":4221.0,\"causes\":[{\"type\":\"BUYER_NOT_ANSWERING\",\"kind\":\"DECLINE_DRIVER\",\"entityId\":\"BUY-202\",\"entityName\":\"Buyer South\",\"summary\":\"Buyer South fa...",
+    "durationMs" : 99
+  }, {
+    "iteration" : 1,
+    "tool" : "list_actions",
+    "input" : { },
+    "ok" : true,
+    "error" : null,
+    "resultPreview" : "[]",
+    "durationMs" : 1
+  }, {
+    "iteration" : 2,
+    "tool" : "get_buyer_hourly",
+    "input" : {
+      "buyerId" : "BUY-202"
+    },
+    "ok" : true,
+    "error" : null,
+    "resultPreview" : "[{\"hour\":8,\"routed\":11,\"payable\":6,\"noAnswer\":1,\"buyerHangup\":1,\"avgAgentsReported\":4.75},{\"hour\":9,\"routed\":23,\"payable\":8,\"noAnswer\":10,\"buyerHangup\":3,\"avgAgentsReported\":5.5},{\"hour\":10,\"routed\":24,\"payable\":9,\"noAnswer\":10,\"buyerHangup\":1,\"avgAgentsReported\":6.25},{\"hour\":11,\"routed\":28,\"payabl...",
+    "durationMs" : 5
+  }, {
+    "iteration" : 2,
+    "tool" : "check_buyer_coverage",
+    "input" : {
+      "buyerId" : "BUY-202"
+    },
+    "ok" : true,
+    "error" : null,
+    "resultPreview" : "{\"buyerId\":\"BUY-202\",\"name\":\"Buyer South\",\"day\":\"2026-11-04\",\"lines\":[{\"campaignId\":\"CMP-MA-SEARCH\",\"state\":\"GA\",\"soleCoverage\":false,\"otherActiveBuyers\":[\"BUY-203 (priority 1, cap 75)\"],\"callsRoutedToThisBuyerOnDay\":13},{\"campaignId\":\"CMP-MA-SEARCH\",\"state\":\"MS\",\"soleCoverage\":false,\"otherActiveBuy...",
+    "durationMs" : 7
+  }, {
+    "iteration" : 2,
+    "tool" : "get_publisher_quality",
+    "input" : {
+      "publisherId" : "PUB-104"
+    },
+    "ok" : true,
+    "error" : null,
+    "resultPreview" : "{\"publisherId\":\"PUB-104\",\"name\":\"Social Affiliate D\",\"status\":\"ACTIVE\",\"flaggedForReview\":false,\"calls\":140,\"routed\":113,\"payable\":37,\"connectedShort\":68,\"veryShortUnder30s\":52,\"duplicates\":22,\"repeatCallersSameDay\":22,\"notRouted\":5,\"buyerFailures\":8,\"payableRateOfConnected\":0.3524,\"medianDurationSe...",
+    "durationMs" : 2
+  }, {
+    "iteration" : 2,
+    "tool" : "get_unrouted_calls",
+    "input" : { },
+    "ok" : true,
+    "error" : null,
+    "resultPreview" : "{\"day\":\"2026-11-04\",\"totalUnrouted\":39,\"byReason\":{\"NOT_ROUTED_CAP\":22,\"NOT_ROUTED_NO_BUYER\":17},\"groups\":[{\"reason\":\"NOT_ROUTED_NO_BUYER\",\"campaignId\":\"CMP-MA-SEARCH\",\"callerState\":\"AZ\",\"calls\":10,\"firstAt\":\"09:13\",\"lastAt\":\"16:16\",\"publishers\":[\"PUB-101\",\"PUB-105\"],\"buyersCoveringThisStateAndCampa...",
+    "durationMs" : 7
+  }, {
+    "iteration" : 2,
+    "tool" : "get_buyer_performance",
+    "input" : { },
+    "ok" : true,
+    "error" : null,
+    "resultPreview" : "[{\"buyerId\":\"BUY-201\",\"name\":\"Buyer North\",\"status\":\"ACTIVE\",\"priority\":1,\"dailyCap\":150,\"routed\":96,\"payable\":66,\"connectedShort\":21,\"noAnswer\":5,\"buyerHangup\":4,\"buyerFailureRate\":0.0938,\"payableRateOfConnected\":0.7586,\"revenue\":2970.0,\"payout\":2026.0,\"margin\":944.0,\"capUsedPct\":0.64,\"capReachedAt...",
+    "durationMs" : 3
+  }, {
+    "iteration" : 3,
+    "tool" : "set_buyer_priority",
+    "input" : {
+      "buyerId" : "BUY-202",
+      "priority" : 2,
+      "reason" : "Nov 4: BUY-202 failed 42.9% of routed calls (76 no-answer+hangup of 177) vs 11.2% on Nov 2, while pings reported ~5.55 free agents (flags HIGH_FAILURE_RATE, REPORTS_FREE_AGENTS_BUT_NOT_ANSWERING). explain_margin_change estimates $630.80 lost margin. Coverage check: pausing would strand 92 calls in 7 sole-coverage state/campaign combos, so demote one level instead to keep it as fallback; GA/MS-search/TX calls can go to BUY-203/BUY-204/BUY-201 first."
+    },
+    "ok" : true,
+    "error" : null,
+    "resultPreview" : "{\"result\":\"APPLIED automatically. The platform setting changed from 1 to 2.\",\"action\":{\"id\":\"ACT-0001\",\"type\":\"SET_BUYER_PRIORITY\",\"targetId\":\"BUY-202\",\"oldValue\":\"1\",\"newValue\":\"2\",\"reason\":\"Nov 4: BUY-202 failed 42.9% of routed calls (76 no-answer+hangup of 177) vs 11.2% on Nov 2, while pings repo...",
+    "durationMs" : 12
+  }, {
+    "iteration" : 3,
+    "tool" : "flag_publisher",
+    "input" : {
+      "publisherId" : "PUB-104",
+      "reason" : "Nov 4: 140 calls (vs 80 on Nov 2) but only 37 payable (vs 57); payable rate 35.2% vs 74.0%; 22 duplicates, 52 calls under 30s, median duration 18s (vs 529s). Flags HIGH_DUPLICATES, MANY_CALLS_UNDER_30S, LOW_PAYABLE_RATE. Junk filled BUY-205 cap (reached 16:38), rejecting clean calls. Estimated lost margin $276.50."
+    },
+    "ok" : true,
+    "error" : null,
+    "resultPreview" : "{\"result\":\"APPLIED automatically. The platform setting changed from false to true.\",\"action\":{\"id\":\"ACT-0002\",\"type\":\"FLAG_PUBLISHER\",\"targetId\":\"PUB-104\",\"oldValue\":\"false\",\"newValue\":\"true\",\"reason\":\"Nov 4: 140 calls (vs 80 on Nov 2) but only 37 payable (vs 57); payable rate 35.2% vs 74.0%; 22 dup...",
+    "durationMs" : 1
+  }, {
+    "iteration" : 3,
+    "tool" : "set_buyer_cap",
+    "input" : {
+      "buyerId" : "BUY-203",
+      "dailyCap" : 90,
+      "reason" : "Nov 4: BUY-203 hit its cap of 75 at 13:53 (245 min left in day); 15 calls rejected at cap (FL/VA on CMP-MA-CTV and CMP-MA-SEARCH) with no other buyer covering those state/campaigns. capNeededToTakeAllRejectedCallsOnTarget = 90. Estimated lost margin $119.33. Requires buyer agreement."
+    },
+    "ok" : true,
+    "error" : null,
+    "resultPreview" : "{\"result\":\"NOT applied yet. Queued for human approval as ACT-0003 (POST /actions/ACT-0003/approve). Tell the user it is pending.\",\"action\":{\"id\":\"ACT-0003\",\"type\":\"SET_BUYER_CAP\",\"targetId\":\"BUY-203\",\"oldValue\":\"75\",\"newValue\":\"90\",\"reason\":\"Nov 4: BUY-203 hit its cap of 75 at 13:53 (245 min left in...",
+    "durationMs" : 1
+  } ],
+  "actions" : [ {
+    "id" : "ACT-0001",
+    "type" : "SET_BUYER_PRIORITY",
+    "targetId" : "BUY-202",
+    "oldValue" : "1",
+    "newValue" : "2",
+    "reason" : "Nov 4: BUY-202 failed 42.9% of routed calls (76 no-answer+hangup of 177) vs 11.2% on Nov 2, while pings reported ~5.55 free agents (flags HIGH_FAILURE_RATE, REPORTS_FREE_AGENTS_BUT_NOT_ANSWERING). explain_margin_change estimates $630.80 lost margin. Coverage check: pausing would strand 92 calls in 7 sole-coverage state/campaign combos, so demote one level instead to keep it as fallback; GA/MS-search/TX calls can go to BUY-203/BUY-204/BUY-201 first.",
+    "requestedBy" : "agent",
+    "requestId" : "REQ-eaf6d45b",
+    "status" : "AUTO_APPLIED",
+    "policyNote" : "One-step demotion: small, reversible, and the buyer stays as a fallback.",
+    "warnings" : [ "Lower priority means other buyers covering the same states get calls first; Buyer South still receives calls nobody else can take." ],
+    "createdAt" : "2026-11-10T17:12:44.276322830Z",
+    "decidedAt" : "2026-11-10T17:12:44.276322830Z",
+    "decidedBy" : "policy",
+    "decisionNote" : "applied automatically"
+  }, {
+    "id" : "ACT-0002",
+    "type" : "FLAG_PUBLISHER",
+    "targetId" : "PUB-104",
+    "oldValue" : "false",
+    "newValue" : "true",
+    "reason" : "Nov 4: 140 calls (vs 80 on Nov 2) but only 37 payable (vs 57); payable rate 35.2% vs 74.0%; 22 duplicates, 52 calls under 30s, median duration 18s (vs 529s). Flags HIGH_DUPLICATES, MANY_CALLS_UNDER_30S, LOW_PAYABLE_RATE. Junk filled BUY-205 cap (reached 16:38), rejecting clean calls. Estimated lost margin $276.50.",
+    "requestedBy" : "agent",
+    "requestId" : "REQ-eaf6d45b",
+    "status" : "AUTO_APPLIED",
+    "policyNote" : "Flagging only asks a person to review; it changes no routing.",
+    "warnings" : [ ],
+    "createdAt" : "2026-11-10T17:12:44.287518711Z",
+    "decidedAt" : "2026-11-10T17:12:44.287518711Z",
+    "decidedBy" : "policy",
+    "decisionNote" : "applied automatically"
+  }, {
+    "id" : "ACT-0003",
+    "type" : "SET_BUYER_CAP",
+    "targetId" : "BUY-203",
+    "oldValue" : "75",
+    "newValue" : "90",
+    "reason" : "Nov 4: BUY-203 hit its cap of 75 at 13:53 (245 min left in day); 15 calls rejected at cap (FL/VA on CMP-MA-CTV and CMP-MA-SEARCH) with no other buyer covering those state/campaigns. capNeededToTakeAllRejectedCallsOnTarget = 90. Estimated lost margin $119.33. Requires buyer agreement.",
+    "requestedBy" : "agent",
+    "requestId" : "REQ-eaf6d45b",
+    "status" : "PENDING_APPROVAL",
+    "policyNote" : "Caps are commercial agreements with the buyer; a person approves.",
+    "warnings" : [ "Raising the cap only helps if the buyer agrees to take more calls. Confirm with Buyer East before approving." ],
+    "createdAt" : "2026-11-10T17:12:44.288545788Z",
+    "decidedAt" : null,
+    "decidedBy" : null,
+    "decisionNote" : null
+  } ],
+  "usage" : {
+    "inputTokens" : 35421,
+    "outputTokens" : 2984,
+    "cacheReadInputTokens" : 11235,
+    "cacheCreationInputTokens" : 3745
+  }
+}
