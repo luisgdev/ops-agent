@@ -19,7 +19,7 @@ import java.util.List;
  * report (the model's Markdown is rendered here; the service itself is untouched). Usage:
  *
  * <pre>
- *   scripts/ask.sh [--dry-run] [--raw] [--no-color] [--verbose] [--out file.json] "question"
+ *   scripts/ask.sh [--dry-run] [--raw] [--no-color] [--verbose] [--out file.json] [--html report.html] "question"
  * </pre>
  *
  * <ul>
@@ -28,9 +28,14 @@ import java.util.List;
  *   <li>{@code --no-color}: plain text (also automatic when piped, or if NO_COLOR is set)</li>
  *   <li>{@code --verbose}: also list every tool call</li>
  *   <li>{@code --out}: save the full JSON response</li>
+ *   <li>{@code --html}: save a self-contained HTML report (no JavaScript; print it to get a PDF)</li>
  * </ul>
  */
 public final class AskCli {
+
+    /** Used when no question is given, so the demo works with just flags. */
+    static final String DEFAULT_QUESTION = "Call volume on Nov 4 was well above Nov 2, but revenue and margin went down. "
+            + "Why, how much did each cause cost us, and what should we do about it?";
 
     private AskCli() {
     }
@@ -41,6 +46,7 @@ public final class AskCli {
         boolean verbose = false;
         boolean noColor = false;
         String out = null;
+        String html = null;
         String question = null;
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
@@ -54,12 +60,18 @@ public final class AskCli {
                     }
                     out = args[++i];
                 }
+                case "--html" -> {
+                    if (i + 1 >= args.length) {
+                        usage();
+                    }
+                    html = args[++i];
+                }
                 case "-h", "--help" -> usage();
                 default -> question = args[i];
             }
         }
         if (question == null || question.isBlank()) {
-            usage();
+            question = DEFAULT_QUESTION;
         }
         String key = System.getenv("ANTHROPIC_API_KEY");
         if (key == null || key.isBlank()) {
@@ -91,6 +103,10 @@ public final class AskCli {
             Files.writeString(Path.of(out), json.writeValueAsString(resp));
         }
 
+        if (html != null) {
+            Files.writeString(Path.of(html), HtmlReport.build(resp));
+        }
+
         if (raw) {
             System.out.println();
             System.out.println(resp.answer());
@@ -117,6 +133,9 @@ public final class AskCli {
         System.out.println(a.dim(resp.toolCalls().size() + " tool calls · " + resp.iterations() + " model calls · "
                 + resp.usage().inputTokens() + " tokens in / " + resp.usage().outputTokens() + " out · " + secs + "s · "
                 + resp.requestId()));
+        if (html != null) {
+            System.out.println(a.dim("HTML report saved to ") + Path.of(html).toAbsolutePath());
+        }
         if (!"end_turn".equals(resp.stopReason())) {
             System.out.println(a.yellow("Note: the agent stopped with '" + resp.stopReason() + "'; the answer may be incomplete."));
         }
@@ -146,7 +165,7 @@ public final class AskCli {
         }
     }
 
-    private static String describe(PlatformAction x) {
+    static String describe(PlatformAction x) {
         String change = x.oldValue() + " → " + x.newValue();
         return switch (x.type()) {
             case FLAG_PUBLISHER -> "Flag publisher " + x.targetId() + " for review";
@@ -180,7 +199,7 @@ public final class AskCli {
     }
 
     private static void usage() {
-        System.err.println("Usage: ask.sh [--dry-run] [--raw] [--no-color] [--verbose] [--out file.json] \"question\"");
+        System.err.println("Usage: ask.sh [--dry-run] [--raw] [--no-color] [--verbose] [--out file.json] [--html report.html] [\"question\"]");
         System.exit(2);
     }
 

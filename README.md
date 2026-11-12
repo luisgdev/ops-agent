@@ -42,6 +42,7 @@ approve/reject, the audit log and the current settings.
 ```bash
 export ANTHROPIC_API_KEY=sk-ant-...
 scripts/ask.sh                                   # asks the Nov 4 question above
+scripts/ask.sh --html report.html                # same, and also saves an HTML report
 scripts/ask.sh --dry-run "Why did BUY-202 fail on Nov 4?"
 ```
 
@@ -57,6 +58,10 @@ only; the service still returns the model's Markdown unchanged.
 | `--verbose` | Also list every tool call with its input and duration |
 | `--no-color` | Plain text (automatic when piped or when `NO_COLOR` is set) |
 | `--out file.json` | Save the full JSON response |
+| `--html report.html` | Save a self-contained HTML report: no JavaScript, no external files, light/dark theme. Open it in a browser, or use Print → Save as PDF |
+
+The script runs from the project folder, so a relative `--html` or `--out` path is saved there;
+use an absolute path to save elsewhere. Flags alone are fine: with no question it asks the one above.
 
 Pending actions are approved or rejected through the REST API (`mvn spring-boot:run`). The CLI
 keeps no state between runs apart from `audit/audit-log.jsonl`.
@@ -304,7 +309,7 @@ src/main/java/digital/rya/opsagent/
   agent/      AgentService (the loop), AnthropicMessagesApi, SystemPrompt, AgentResponse
   config/     OpsAgent (plain-Java wiring), AppConfig (Spring beans)
   web/        AgentController, ActionController, PlatformController, ApiErrors
-  cli/        AskCli (ask from the command line), MarkdownRenderer (terminal output)
+  cli/        AskCli (ask from the command line), MarkdownRenderer (terminal output), HtmlReport (HTML export)
 data/         the data kit, unchanged
 docs/         full JSON of the run shown above
 scripts/      demo.sh (REST flow), ask.sh (command-line report)
