@@ -48,6 +48,11 @@ public class ToolRegistry {
         return arr;
     }
 
+    /** The registered tools, in registration order (used by the MCP server to build its tool list). */
+    public List<Tool> all() {
+        return List.copyOf(tools.values());
+    }
+
     public boolean has(String name) {
         return tools.containsKey(name);
     }

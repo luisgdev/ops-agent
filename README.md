@@ -21,7 +21,7 @@ being lost and fixes what it safely can. Everything else goes to a person for ap
 export ANTHROPIC_API_KEY=sk-ant-...          # never committed; read from the environment
 export ANTHROPIC_MODEL=claude-opus-5-5       # optional, default is claude-sonnet-5-5
 
-mvn test                                     # 36 tests, no API key needed
+mvn test                                     # no API key needed
 mvn spring-boot:run                          # starts on http://localhost:8080
 ```
 
@@ -65,6 +65,60 @@ use an absolute path to save elsewhere. Flags alone are fine: with no question i
 
 Pending actions are approved or rejected through the REST API (`mvn spring-boot:run`). The CLI
 keeps no state between runs apart from `audit/audit-log.jsonl`.
+
+### Use it as an MCP server
+
+The same tools the agent uses are available over the [Model Context Protocol](https://modelcontextprotocol.io)
+(stdio), so Claude Code, Claude Desktop, IntelliJ or any MCP client can investigate the
+platform with **its own model**. This mode needs **no API key**.
+
+**Requirements:** JDK 17+ and Maven 3.9+ (the script builds the jar on first use).
+
+1. Check that it builds and starts, from the project folder:
+   ```bash
+   scripts/mcp.sh      # prints "rya-ops-agent MCP server ready: 15 tools ..." on stderr; Ctrl+D to stop
+   ```
+2. Register it with your client. Use an **absolute path** to `scripts/mcp.sh` everywhere except
+   the project-scoped `.mcp.json`.
+
+   | Client | Setup |
+   |---|---|
+   | Claude Code, inside this repo | Nothing to do: `.mcp.json` already declares `rya-ops-agent`. Start `claude` here and approve the server when asked |
+   | Claude Code, any folder | `claude mcp add rya-ops-agent --scope user -- /abs/path/to/ops-agent/scripts/mcp.sh` |
+   | Claude Desktop | Add the block below to `claude_desktop_config.json`, then restart the app |
+   | IntelliJ IDEA / other clients | Add a stdio server whose command is the absolute path of `scripts/mcp.sh` |
+
+   ```json
+   {
+     "mcpServers": {
+       "rya-ops-agent": {
+         "command": "/abs/path/to/ops-agent/scripts/mcp.sh",
+         "env": { "OPSAGENT_DRY_RUN": "false" }
+       }
+     }
+   }
+   ```
+3. Verify: in Claude Code run `/mcp` (it should list `rya-ops-agent` as connected), then ask
+   *"Use the rya-ops-agent tools to explain why margin fell on Nov 4 compared with Nov 2."*
+
+Settings are environment variables (set them in the `env` block, or in `claude mcp add -e KEY=value`):
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `OPSAGENT_DRY_RUN` | `false` | `true`: action tools only record what they would do. Good for a first try |
+| `OPSAGENT_AUTO_APPLY` | `true` | `false`: kill switch, every action needs approval |
+| `OPSAGENT_DATA_DIR` | `data` | Data kit folder (relative to the project folder) |
+| `OPSAGENT_AUDIT_FILE` | `audit/audit-log.jsonl` | Audit file (empty for memory only) |
+
+What it exposes: all 15 tools (10 read, 5 action), marked read-only or not, plus short
+instructions for the client's model (investigate first, quote tool numbers, check coverage
+before changing a buyer). Action tools use the same policy, audit log and dry run as the
+REST API. **Approve/reject is not an MCP tool on purpose**, so a model cannot approve its own
+proposals: a person does it through `POST /actions/{id}/approve` on the REST server.
+
+Limits: the platform is in memory and each MCP session starts from the original data kit, so
+pending actions live only as long as the client keeps the server running; the audit file is the
+durable record. Logs go to stderr; stdout carries only protocol messages.
 
 ### API
 
@@ -265,6 +319,7 @@ Run them with `mvn test`. They need no API key.
 | `ActionServiceTest` | Every guardrail rule: auto vs approval vs block, the 24h cooldown, kill switch, dry run, approve/reject, stale check, duplicate proposals, sole-coverage warning |
 | `AgentServiceTest` | The loop against a scripted fake Claude: results sent back, unknown tool and bad input recovered from, iteration limit with forced answer, real action statuses reported, dry run, API failure mid-run still reporting applied actions |
 | `ApiControllerTest` | HTTP approve/reject flow and error codes (MockMvc) |
+| `McpServerTest` | The MCP protocol subset: handshake, tool list and hints, calls, tool errors vs protocol errors, dry run, no approval tool |
 | `PlatformLoaderTest` | The data kit loads completely, and `*` and blank fields are handled |
 
 ---
@@ -309,8 +364,9 @@ src/main/java/digital/rya/opsagent/
   agent/      AgentService (the loop), AnthropicMessagesApi, SystemPrompt, AgentResponse
   config/     OpsAgent (plain-Java wiring), AppConfig (Spring beans)
   web/        AgentController, ActionController, PlatformController, ApiErrors
+  mcp/        McpServer (MCP over stdio), McpMain (entry point), Instructions
   cli/        AskCli (ask from the command line), MarkdownRenderer (terminal output), HtmlReport (HTML export)
 data/         the data kit, unchanged
 docs/         full JSON of the run shown above
-scripts/      demo.sh (REST flow), ask.sh (command-line report)
+scripts/      demo.sh (REST flow), ask.sh (command-line report), mcp.sh (MCP server)
 ```

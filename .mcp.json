@@ -6,6 +6,11 @@
       "headers": {
         "IJ_MCP_LAUNCH_ORIGIN": "${IJ_MCP_LAUNCH_ORIGIN:-}"
       }
+    },
+    "rya-ops-agent": {
+      "type": "stdio",
+      "command": "./scripts/mcp.sh",
+      "args": []
     }
   }
 }
